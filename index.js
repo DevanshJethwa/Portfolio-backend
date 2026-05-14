@@ -18,7 +18,7 @@ app.post("/sendEmail", async (req, res) => {
     try {
 
         const { name, email, subject, message } = req.body;
-
+        console.log("PROCESS.ENV", process.env);
         // Validation
         if (!name || name.trim().length < 3) {
             return res.status(400).json({
