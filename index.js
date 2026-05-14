@@ -60,16 +60,16 @@ app.post("/sendEmail", async (req, res) => {
         );
 
         // Nodemailer transporter
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000,
-        });
+       const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+    family: 4, // force IPv4
+});
 
         // Verify SMTP connection
         await transporter.verify();
@@ -78,21 +78,19 @@ app.post("/sendEmail", async (req, res) => {
 
         // Mail options
         const mailOptions = {
-            from: process.env.EMAIL_USER,
-            replyTo: email,
-            to: process.env.EMAIL_USER,
-            subject: `Portfolio Contact: ${subject}`,
-            html: `
-                <h2>New Portfolio Message</h2>
-                
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-
-                <p><strong>Message:</strong></p>
-                <p>${message}</p>
-            `,
-        };
+    from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+    replyTo: email,
+    to: process.env.EMAIL_USER,
+    subject: `Portfolio Contact: ${subject}`,
+    html: `
+        <h2>New Portfolio Message</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+    `,
+};
 
         // Send mail
         await transporter.sendMail(mailOptions);
